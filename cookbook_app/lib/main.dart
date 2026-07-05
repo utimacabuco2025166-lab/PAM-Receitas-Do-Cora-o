@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
       ),
       home: const HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

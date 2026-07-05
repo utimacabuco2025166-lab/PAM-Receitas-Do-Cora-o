@@ -7,33 +7,47 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(recipeNotifierProvider);
+  final state = ref.watch(recipeProvider);
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
         title: const Text('Nossas Receitas'),
         actions: [
           IconButton(icon: const Icon (Icons.search), onPressed: (){
-            ref.read(recipeNotifierProvider.notifier).search('pasta');
+            ref.read(recipeProvider.notifier).search('pasta');
           })
         ]
         
       ),
-      body: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : state.errorMessage != null
-              ? Center(child: Text(state.errorMessage!))
-              : ListView.builder(
-                  itemCount: state.recipes.length,
-                  itemBuilder: (context, index) {
-                    final recipe = state.recipes[index];
-                    return ListTile(
-                      leading: Image.network(recipe.image, width: 50, errorBuilder: (_, __, ___) => const Icon(Icons.fastfood)),
-                      title: Text(recipe.title),
-                      subtitle: Text('Pronto em ${recipe.readyInMinutes} min'),
-                    );
-                  },
-                ),
-    );
+      body: Column(
+  children: [
+    Padding(
+      padding: const EdgeInsets.all(12),
+      child: TextField(
+        decoration: const InputDecoration(
+          labelText: 'Pesquisar receita',
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.search),
+        ),
+        onSubmitted: (value) {
+          ref.read(recipeProvider.notifier).search(value);
+        },
+      ),
+    ),
+    Expanded(
+      child: ListView.builder(
+        itemCount: state.visibleRecipes.length,
+        itemBuilder: (context, index) {
+          final recipe = state.visibleRecipes[index];
+          return ListTile(
+            title: Text(recipe.title),
+          );
+        },
+      ),
+    ),
+  ],
+)
   }
 }

@@ -31,5 +31,13 @@ class RecipeNotifier extends _$RecipeNotifier {
   state = state.copyWith( isLoading: false, errorMessage: 'Não foi possível encontrar receitas: $e'); //Atualiza o estado para indicar que a busca foi concluída, mas ocorreu um erro. A mensagem de erro é armazenada no estado para que possa ser exibida na interface do usuário.
   }
   }
+  
+  void changeSort(RecipeSort sortBy) {
+  state = state.copyWith(sortBy: sortBy);
+}
+
+void toggleQuickRecipes(bool value) {
+  state = state.copyWith(onlyQuickRecipes: value);
+}
     
 }  
