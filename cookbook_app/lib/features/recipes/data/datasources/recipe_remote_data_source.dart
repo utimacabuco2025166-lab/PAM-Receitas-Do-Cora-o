@@ -1,34 +1,50 @@
 import 'package:dio/dio.dart';
-import '../../../../core/utils/constants.dart';
 import '../models/recipe_model.dart';
 
 
 
 abstract class RecipeRemoteDataSource {
-  Future<List<RecipeModel>> searchRecipes(String query);  //
+  Future<List<RecipeModel>> searchRecipes({ //todos os searchRecipes vao ter que implementar essa função
+    required String query,
+    required String sort,
+    required String category,
+  }); 
 }
 
-class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
-  final Dio dio;
+class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource { // faz o que esta a cima
+  final Dio dio;// contacto com a internet, para fazer requisições http
   final String apiKey = '4fa297a4d1be4b88a3c9eaa603a93dfa'; 
+//TODO: esconder a apikey
 
   RecipeRemoteDataSourceImpl(this.dio);
 
   @override
-  Future<List<RecipeModel>> searchRecipes(String query) async {
-    final response = await dio.get(
+  Future<List<RecipeModel>> searchRecipes({//rebecebe os parametros
+  required String query,
+  required String sort,
+  required String category,
+})async {
+    final response = await dio.get(//devolve a resposta
       'https://api.spoonacular.com/recipes/complexSearch',
-      queryParameters: {
+      queryParameters: {//informacoes que vao ser passadas para a url, como se fosse um filtro
         'query': query,
         'apiKey': apiKey,
+        // Limite de resultados
+        'number': 3, 
+        if (sort != 'none')'sort': sort,
+        if (sort == 'title') 'sortDirection': 'asc',
+        if (category != 'all') 'type': category,
+
       },
     );
 
     if (response.statusCode == 200) {
-      final List results = response.data['results'];
-      return results.map((json) => RecipeModel.fromJson(json)).toList();
+      final List results = response.data['results'] as List;
+      return results
+          .map((json) => RecipeModel.fromJson(json as Map<String, dynamic>))
+          .toList();
     } else {
-      throw Exception('Falha ao buscar receitas: ${response.statusCode}');
+      throw Exception('Falha ao carregar receitas');
     }
   }
 }

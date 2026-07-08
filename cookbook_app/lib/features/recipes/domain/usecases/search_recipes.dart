@@ -6,7 +6,15 @@ class SearchRecipes {//usercase de procurar receita
 
   SearchRecipes(this.repository);
 
-  Future<List<Recipe>> call(String query){
-    return repository.searchRecipes(query);
+  Future<List<Recipe>> call({
+    required String query,
+    required String sort,
+    required String category,
+  }) {
+    return repository.searchRecipes(
+      query: query,
+      sort: sort,
+      category: category,
+    );
   }
 }

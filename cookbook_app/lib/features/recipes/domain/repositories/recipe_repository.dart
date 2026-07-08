@@ -1,6 +1,10 @@
+
 import '../entities/recipe.dart';
 
 abstract class RecipeRepository {
-  Future<List<Recipe>> searchRecipes(String query);
-  Future<Recipe> getRecipeDetail(int id);
+  Future<List<Recipe>> searchRecipes({
+    required String query,
+    required String sort,
+    required String category,
+  });
 }

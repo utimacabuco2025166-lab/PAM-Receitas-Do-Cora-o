@@ -13,7 +13,10 @@ class RecipeNotifier extends _$RecipeNotifier {
     return RecipeState.initial();
   }
 
-  Future<void> search(String query) async //Essa função é responsável por buscar receitas com base em uma consulta fornecida. Ela atualiza o estado para indicar que a busca está em andamento, realiza a busca usando o caso de uso SearchRecipes, e atualiza o estado com os resultados ou uma mensagem de erro, se houver.
+  Future<void> search(  { required String query,
+    required String sort,
+    required String category,
+    }) async //Essa função é responsável por buscar receitas com base em uma consulta fornecida. Ela atualiza o estado para indicar que a busca está em andamento, realiza a busca usando o caso de uso SearchRecipes, e atualiza o estado com os resultados ou uma mensagem de erro, se houver.
   {
   state = state.copyWith(isLoading: true, errorMessage: null);
 
@@ -21,7 +24,11 @@ class RecipeNotifier extends _$RecipeNotifier {
     final repository = ref.read(recipeRepositoryProvider);
     final useCase = SearchRecipes(repository);
 
-    final results = await useCase(query);
+    final results = await useCase(
+      query: query,
+      sort: sort,
+      category: category,
+      );
 
     state = state.copyWith(isLoading: false, recipes:results); //Atualiza o estado para indicar que a busca foi concluída e armazena os resultados obtidos na lista de receitas.
 
@@ -32,12 +39,5 @@ class RecipeNotifier extends _$RecipeNotifier {
   }
   }
   
-  void changeSort(RecipeSort sortBy) {
-  state = state.copyWith(sortBy: sortBy);
-}
-
-void toggleQuickRecipes(bool value) {
-  state = state.copyWith(onlyQuickRecipes: value);
-}
-    
+  
 }  

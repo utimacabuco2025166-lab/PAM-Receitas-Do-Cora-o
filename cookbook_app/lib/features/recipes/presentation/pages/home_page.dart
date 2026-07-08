@@ -2,52 +2,145 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/recipe_notifier.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-  final state = ref.watch(recipeProvider);
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        title: const Text('Nossas Receitas'),
-        actions: [
-          IconButton(icon: const Icon (Icons.search), onPressed: (){
-            ref.read(recipeProvider.notifier).search('pasta');
-          })
-        ]
-        
+class _HomePageState extends ConsumerState<HomePage> {
+  final TextEditingController _controller = TextEditingController();// guarda texto no campo de texto
+  String _sort = 'none'; // sem ordenação
+  String _category = 'all'; //todas as categorias
+
+  @override
+  void dispose() { //serve para liberar o campo de de texro dps de usar
+  //perde a memoria para nao ficar ocupando memoria
+    _controller.dispose();
+    super.dispose();
+  }
+
+void _search() {//literalmente leva oq foi escrito no campo de texto para a função de busca
+    final query = _controller.text.trim(); // oq foi escrito, mesmo com espaços no inicio e no final, ele vai tirar esses espaços
+
+    ref.read(recipeProvider.notifier).search(//finalmente chama a função de busca, passando os parametros de busca
+      query: query,
+      sort: _sort,
+      category: _category,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {// a tela comeca a ter um corpo apartir daqui.
+    final state = ref.watch(recipeProvider);// mostra qual o estado atual da tela.
+
+    return Scaffold(//estrutura basica da tela
+      appBar: AppBar(//barra de titulo da tela
+        backgroundColor: Colors.green,//fundo
+        foregroundColor: Colors.white,//texto
+        title: const Text('Nossas Receitas'),//titulo
       ),
-      body: Column(
-  children: [
-    Padding(
-      padding: const EdgeInsets.all(12),
-      child: TextField(
-        decoration: const InputDecoration(
-          labelText: 'Pesquisar receita',
-          border: OutlineInputBorder(),
-          prefixIcon: Icon(Icons.search),
-        ),
-        onSubmitted: (value) {
-          ref.read(recipeProvider.notifier).search(value);
-        },
+      body: Column(// content da pagina
+      //coluna vertical, onde os elementos vao ser colocados um embaixo do outro
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: TextField(//campo de pesquisa)
+              controller: _controller,// 
+              decoration: const InputDecoration(//aparencia
+                labelText: 'Pesquisar receita',//texto do campo
+                border: OutlineInputBorder(),//borda
+                prefixIcon: Icon(Icons.search),//icone
+              ),
+              onSubmitted: (_) => _search(),// enviar = rodar
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: DropdownButtonFormField<String>(//menu de escolhas em dropdown
+              value: _sort,// escolha a ordenação
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Ordenar por',
+              ),
+              items: const [// opções do menu de escolhas
+                DropdownMenuItem(
+                  value: 'none',
+                  child: Text('Sem ordenação'),
+                ),
+                DropdownMenuItem(
+                  value: 'title',
+                  child: Text('Nome A-Z'),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _sort = value ?? 'none';
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: DropdownButtonFormField<String>(
+              value: _category,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Categoria',
+              ),
+              items: const [// mesma coisa do menu de escolhas, mas agora para categorias
+                DropdownMenuItem(
+                  value: 'all',
+                  child: Text('Todas'),
+                ),
+                DropdownMenuItem(
+                  value: 'soup',
+                  child: Text('Sopas'),
+                ),
+                DropdownMenuItem(
+                  value: 'dessert',
+                  child: Text('Sobremesas'),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _category = value ?? 'all';
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: SizedBox(
+              width: double.infinity,
+              child: 
+              ElevatedButton(//botao, mas se quiser pode so apertar o enter
+                onPressed: _search,
+                child: const Text('Buscar'),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(// expande para o resto da tela
+            child: state.isLoading// se estiver carregando vai mostrar um circulo girando
+                ? const Center(child: CircularProgressIndicator())
+                : state.errorMessage != null// houve erro? mostra a mensagem 
+                    ? Center(child: Text(state.errorMessage!))
+                    : ListView.builder(//nao houve erro? mostra a lista e cada receita 'e um item
+                        itemCount: state.recipes.length,//quantidade de itens na lista
+                        itemBuilder: (context, index) {//construtor de cada item da lista
+                          final recipe = state.recipes[index];
+                          return ListTile(
+                            title: Text(recipe.title),
+                          );
+                        },
+                      ),
+          ),
+        ],
       ),
-    ),
-    Expanded(
-      child: ListView.builder(
-        itemCount: state.visibleRecipes.length,
-        itemBuilder: (context, index) {
-          final recipe = state.visibleRecipes[index];
-          return ListTile(
-            title: Text(recipe.title),
-          );
-        },
-      ),
-    ),
-  ],
-)
+    );
   }
 }

@@ -1,6 +1,6 @@
 import '../../domain/entities/recipe.dart';
 
-class RecipeModel  extends Recipe{
+class RecipeModel  extends Recipe{ //um modelo de Recipe que aceita json
   const RecipeModel({
     required super.id,
     required super.title,
@@ -12,14 +12,15 @@ class RecipeModel  extends Recipe{
 
 //trasnformar Json em objeto 
 
-factory RecipeModel.fromJson(Map<String, dynamic> json) {
+factory RecipeModel.fromJson(Map<String, dynamic> json) {// os valores de json sao substituidos
   return RecipeModel(
-    id: json['id'],
-    title: json['title']?? '',
-    image: json['image'] ?? '',
-    readyInMinutes: json['readyInMinutes'] ?? 0,
-    servings: json['servings'] ?? 0,
-    summary: json['summary']?? '',
+    id: json['id'] as int,
+    title: json['title'] as String? ?? '',
+    image: json['image'] as String? ?? '',
+    readyInMinutes: json['readyInMinutes'] as int? ?? 0,
+    servings: json['servings'] as int? ?? 0,
+    summary: json['summary'] as String? ?? '',
   );
+  
 }
 }
