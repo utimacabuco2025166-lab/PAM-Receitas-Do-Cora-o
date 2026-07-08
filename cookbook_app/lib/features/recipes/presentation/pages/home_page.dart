@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/recipe_notifier.dart';
+import 'recipe_details_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -129,13 +130,40 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun√
                 ? const Center(child: CircularProgressIndicator())
                 : state.errorMessage != null// houve erro? mostra a mensagem 
                     ? Center(child: Text(state.errorMessage!))
-                    : ListView.builder(//nao houve erro? mostra a lista e cada receita 'e um item
+                    : ListView.builder( //nao houve erro? mostra a lista e cada receita 'e um item
                         itemCount: state.recipes.length,//quantidade de itens na lista
                         itemBuilder: (context, index) {//construtor de cada item da lista
                           final recipe = state.recipes[index];
-                          return ListTile(
-                            title: Text(recipe.title),
-                          );
+                          return  Card(// caixa visual
+                            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            child: ListTile(
+                              onTap: (){// quando tocar no item, fara algo
+                                Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RecipeDetailsPage(recipe: recipe),
+        ),
+      );
+    }, //layout de cada item da lista
+                              leading: recipe.image.isNotEmpty//lado esquerdo
+                                ? ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+            child: Image.network(//imagem da internet
+              recipe.image,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+            ),
+          )
+        : const Icon(Icons.restaurant),
+    title: Text(recipe.title),
+    subtitle: Text(//tempo de preparo
+      recipe.readyInMinutes > 0
+          ? '${recipe.readyInMinutes} min'
+          : 'Tempo n√£o informado',
+    ),
+  ),
+);
                         },
                       ),
           ),
