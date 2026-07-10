@@ -41,7 +41,7 @@ final class RecipeNotifierProvider
   }
 }
 
-String _$recipeNotifierHash() => r'ad37bb7e76cb7bde8fdf83574756846ff038b231';
+String _$recipeNotifierHash() => r'6b217096585a8ed31b25369ebe924d1c2f6a0a9b';
 
 abstract class _$RecipeNotifier extends $Notifier<RecipeState> {
   RecipeState build();

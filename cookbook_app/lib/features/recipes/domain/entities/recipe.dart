@@ -5,6 +5,7 @@ class Recipe {
   final int readyInMinutes;
   final int servings;
   final String summary;
+  final List<String> ingredients;
 
   const Recipe({
     required this.id,
@@ -13,5 +14,6 @@ class Recipe {
     required this.readyInMinutes,
     required this.servings,
     required this.summary,
+    required this.ingredients,
   });
 }

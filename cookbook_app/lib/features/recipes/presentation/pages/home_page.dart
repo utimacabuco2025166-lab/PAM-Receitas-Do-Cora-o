@@ -40,7 +40,7 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun√
       appBar: AppBar(//barra de titulo da tela
         backgroundColor: Colors.green,//fundo
         foregroundColor: Colors.white,//texto
-        title: const Text('Nossas Receitas'),//titulo
+        title: const Text('Our recipes'),//titulo
       ),
       body: Column(// content da pagina
       //coluna vertical, onde os elementos vao ser colocados um embaixo do outro
@@ -50,7 +50,7 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun√
             child: TextField(//campo de pesquisa)
               controller: _controller,// 
               decoration: const InputDecoration(//aparencia
-                labelText: 'Pesquisar receita',//texto do campo
+                labelText: 'Search recipes',//texto do campo
                 border: OutlineInputBorder(),//borda
                 prefixIcon: Icon(Icons.search),//icone
               ),
@@ -63,16 +63,16 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun√
               value: _sort,// escolha a ordena√ß√£o
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Ordenar por',
+                labelText: 'Sort by',
               ),
               items: const [// op√ß√µes do menu de escolhas
                 DropdownMenuItem(
                   value: 'none',
-                  child: Text('Sem ordena√ß√£o'),
+                  child: Text('No sorting'),
                 ),
                 DropdownMenuItem(
                   value: 'title',
-                  child: Text('Nome A-Z'),
+                  child: Text('Name A-Z'),
                 ),
               ],
               onChanged: (value) {
@@ -89,20 +89,20 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun√
               value: _category,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Categoria',
+                labelText: 'Category',
               ),
               items: const [// mesma coisa do menu de escolhas, mas agora para categorias
                 DropdownMenuItem(
                   value: 'all',
-                  child: Text('Todas'),
+                  child: Text('All'),
                 ),
                 DropdownMenuItem(
                   value: 'soup',
-                  child: Text('Sopas'),
+                  child: Text('Soups'),
                 ),
                 DropdownMenuItem(
                   value: 'dessert',
-                  child: Text('Sobremesas'),
+                  child: Text('Desserts'),
                 ),
               ],
               onChanged: (value) {
@@ -120,7 +120,7 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun√
               child: 
               ElevatedButton(//botao, mas se quiser pode so apertar o enter
                 onPressed: _search,
-                child: const Text('Buscar'),
+                child: const Text('Search'),
               ),
             ),
           ),
@@ -138,10 +138,10 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun√
                             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             child: ListTile(
                               onTap: (){// quando tocar no item, fara algo
-                                Navigator.push(
+                                Navigator.push(// abre uma nova janela
         context,
-        MaterialPageRoute(
-          builder: (context) => RecipeDetailsPage(recipe: recipe),
+        MaterialPageRoute(//rota de navegacao, usa o visual do material design
+          builder: (context) => RecipeDetailsPage(recipe: recipe), // va a pagina RecipeDetailsPage e leva as informacoes
         ),
       );
     }, //layout de cada item da lista
@@ -160,7 +160,7 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun√
     subtitle: Text(//tempo de preparo
       recipe.readyInMinutes > 0
           ? '${recipe.readyInMinutes} min'
-          : 'Tempo n√£o informado',
+          : 'Time not provided',
     ),
   ),
 );

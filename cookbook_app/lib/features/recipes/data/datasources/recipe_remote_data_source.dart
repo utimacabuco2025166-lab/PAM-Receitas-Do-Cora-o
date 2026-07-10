@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../models/recipe_model.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 
@@ -13,7 +14,7 @@ abstract class RecipeRemoteDataSource {
 
 class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource { // faz o que esta a cima
   final Dio dio;// contacto com a internet, para fazer requisições http
-  final String apiKey = '4fa297a4d1be4b88a3c9eaa603a93dfa'; 
+  final String apiKey = dotenv.env['SPOONACULAR_API_KEY']!;
 //TODO: esconder a apikey
 
   RecipeRemoteDataSourceImpl(this.dio);
@@ -31,6 +32,9 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource { // faz o qu
         'apiKey': apiKey,
         // Limite de resultados
         'number': 3, 
+        'addRecipeInformation': true,
+        'fillIngredients': true,
+        'language': 'pt',
         if (sort != 'none')'sort': sort,
         if (sort == 'title') 'sortDirection': 'asc',
         if (category != 'all') 'type': category,

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/recipe.dart';
+import 'package:flutter_html/flutter_html.dart';
 
-class RecipeDetailsPage extends StatelessWidget { //essa pagina nao guarda estados, ou seja, nao muda nnada
-  final Recipe recipe;// ja recebe uma receita para mostrar os detalhes dela
+class RecipeDetailsPage extends StatelessWidget {
+  //essa pagina nao guarda estados, ou seja, nao muda nnada
+  final Recipe recipe; // ja recebe uma receita para mostrar os detalhes dela
 
-  const RecipeDetailsPage({
-    super.key,
-    required this.recipe,
-  });
+  const RecipeDetailsPage({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context) {
@@ -33,28 +32,37 @@ class RecipeDetailsPage extends StatelessWidget { //essa pagina nao guarda estad
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    recipe.title,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  Html(
+                    data: recipe.summary,
+                    style: {
+                      "a": Style(
+                        color: Colors.black,
+                        textDecoration: TextDecoration.none,
+                      ),
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Ingredients:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ...recipe.ingredients.map(
+                    (ingredient) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Text('• $ingredient'),
                     ),
                   ),
-                  const SizedBox(height: 12),
                   Text(
-                    'Tempo de preparo: ${recipe.readyInMinutes} min',
+                    'Prep Time: ${recipe.readyInMinutes} min',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Porções: ${recipe.servings}',
+                    'Portions: ${recipe.servings}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    recipe.summary,
-                    style: const TextStyle(fontSize: 16),
-                  ),
                 ],
               ),
             ),
