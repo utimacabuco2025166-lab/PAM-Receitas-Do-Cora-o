@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/recipe_notifier.dart';
 import 'recipe_details_page.dart';
+import 'favorites_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -40,7 +41,18 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a funÃ
       appBar: AppBar(//barra de titulo da tela
         backgroundColor: Colors.green,//fundo
         foregroundColor: Colors.white,//texto
-        title: const Text('Our recipes'),//titulo
+        title: const Text('Our recipes'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FavoritesPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(// content da pagina
       //coluna vertical, onde os elementos vao ser colocados um embaixo do outro

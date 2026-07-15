@@ -1,18 +1,35 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/recipe.dart';
 import 'package:flutter_html/flutter_html.dart';
+import '../providers/favorites_notifier.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RecipeDetailsPage extends StatelessWidget {
+class RecipeDetailsPage extends ConsumerWidget {
   //essa pagina nao guarda estados, ou seja, nao muda nnada
   final Recipe recipe; // ja recebe uma receita para mostrar os detalhes dela
+
+  
 
   const RecipeDetailsPage({super.key, required this.recipe});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoritesState = ref.watch(favoritesProvider);
+final isFavorite = favoritesState.isFavorite(recipe.id.toString());
     return Scaffold(
       appBar: AppBar(
         title: Text(recipe.title),
+        actions: [
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? Colors.red : null,
+            ),
+            onPressed: () {
+              ref.read(favoritesProvider.notifier).toggleFavorite(recipe.id.toString());
+            },
+          ),
+        ],
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
       ),
