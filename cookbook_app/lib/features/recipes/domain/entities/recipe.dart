@@ -1,17 +1,19 @@
-class Recipe{
+class Recipe {
   final int id;
   final String title;
   final String image;
   final int readyInMinutes;
   final int servings;
   final String summary;
+  final List<String> ingredients;
 
   const Recipe({
-required this.id,
-required this.title,
-required this.image,
-required this.readyInMinutes,
-required this.servings,
-required this.summary
+    required this.id,
+    required this.title,
+    required this.image,
+    required this.readyInMinutes,
+    required this.servings,
+    required this.summary,
+    required this.ingredients,
   });
 }
