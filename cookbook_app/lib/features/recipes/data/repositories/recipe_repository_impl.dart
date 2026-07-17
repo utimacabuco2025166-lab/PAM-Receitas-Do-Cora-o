@@ -23,4 +23,9 @@ RecipeRepositoryImpl(this.remoteDataSource);
     );
   return models.cast<Recipe>().toList();
   }
+
+@override
+Future<Recipe> getRecipeById(int id) async {
+  return await remoteDataSource.getRecipeById(id);
+}
 }

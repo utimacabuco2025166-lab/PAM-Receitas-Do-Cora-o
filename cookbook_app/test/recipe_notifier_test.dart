@@ -24,6 +24,9 @@ class FakeRecipeRepository implements RecipeRepository {
       ),
     ];
   }
+  Future<Recipe> getRecipeById(int id) async {
+  throw UnimplementedError();
+}
 }
 
 void main() {

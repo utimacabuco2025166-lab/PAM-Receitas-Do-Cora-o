@@ -10,6 +10,7 @@ abstract class RecipeRemoteDataSource {
     required String sort,
     required String category,
   }); 
+  Future<RecipeModel> getRecipeById(int id);
 }
 
 class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource { // faz o que esta a cima
@@ -50,5 +51,20 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource { // faz o qu
     } else {
       throw Exception('Falha ao carregar receitas');
     }
-  }
+
+    
+
+  } 
+  Future<RecipeModel> getRecipeById(int id) async {
+  final response = await dio.get(
+    'https://api.spoonacular.com/recipes/$id/information',
+    queryParameters: {
+      'apiKey': dotenv.env['SPOONACULAR_API_KEY']!,
+    },
+  );
+  return RecipeModel.fromJson(response.data);
+}
+
+
+
 }

@@ -7,4 +7,6 @@ abstract class RecipeRepository {
     required String sort,
     required String category,
   });
+
+  Future<Recipe> getRecipeById(int id);
 }

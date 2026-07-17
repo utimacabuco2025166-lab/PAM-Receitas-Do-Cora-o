@@ -1,21 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/device_id_provider.dart';
 
 class FavoritesRemoteDataSource {
-  final _collection = FirebaseFirestore.instance.collection('favorites');
+  Future<CollectionReference> _getUserCollection() async {
+    final deviceId = await DeviceIdProvider.getDeviceId();
+    return FirebaseFirestore.instance
+        .collection('favorites')
+        .doc(deviceId)
+        .collection('recipes');
+  }
 
-  // Devolve a lista de IDs favoritados
   Future<List<String>> getFavoriteIds() async {
-    final snapshot = await _collection.get();
+    final collection = await _getUserCollection();
+    final snapshot = await collection.get();
     return snapshot.docs.map((doc) => doc.id).toList();
   }
 
-  // Adiciona um ID à lista de favoritos
   Future<void> addFavorite(String recipeId) async {
-    await _collection.doc(recipeId).set({'favorited': true});
+    final collection = await _getUserCollection();
+    await collection.doc(recipeId).set({'favorited': true});
   }
 
-  // Remove um ID da lista de favoritos
   Future<void> removeFavorite(String recipeId) async {
-    await _collection.doc(recipeId).delete();
-  }
+    final collection = await _getUserCollection();
+    await collection.doc(recipeId).delete();
+  } 
+
+  
+  
+  
 }
