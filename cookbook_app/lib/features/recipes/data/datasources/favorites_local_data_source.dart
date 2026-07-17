@@ -1,29 +1,21 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FavoritesLocalDataSource {
-  static const String _key = 'favorite_recipe_ids';
+class FavoritesRemoteDataSource {
+  final _collection = FirebaseFirestore.instance.collection('favorites');
 
-  // Devolve a lista de IDs favoritados, guardados como texto
+  // Devolve a lista de IDs favoritados
   Future<List<String>> getFavoriteIds() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList(_key) ?? [];
+    final snapshot = await _collection.get();
+    return snapshot.docs.map((doc) => doc.id).toList();
   }
 
   // Adiciona um ID à lista de favoritos
   Future<void> addFavorite(String recipeId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final ids = prefs.getStringList(_key) ?? [];
-    if (!ids.contains(recipeId)) {
-      ids.add(recipeId);
-      await prefs.setStringList(_key, ids);
-    }
+    await _collection.doc(recipeId).set({'favorited': true});
   }
 
   // Remove um ID da lista de favoritos
   Future<void> removeFavorite(String recipeId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final ids = prefs.getStringList(_key) ?? [];
-    ids.remove(recipeId);
-    await prefs.setStringList(_key, ids);
+    await _collection.doc(recipeId).delete();
   }
 }

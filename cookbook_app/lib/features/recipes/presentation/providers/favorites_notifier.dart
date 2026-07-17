@@ -6,7 +6,7 @@ part 'favorites_notifier.g.dart';
 
 @riverpod
 class FavoritesNotifier extends _$FavoritesNotifier {
-  final _dataSource = FavoritesLocalDataSource();
+  final _dataSource = FavoritesRemoteDataSource();
 
   @override
   FavoritesState build() {
@@ -14,13 +14,11 @@ class FavoritesNotifier extends _$FavoritesNotifier {
     return FavoritesState.initial();
   }
 
-  // Carrega os favoritos salvos assim que o app abre
   Future<void> _loadFavorites() async {
     final ids = await _dataSource.getFavoriteIds();
     state = state.copyWith(favoriteIds: ids);
   }
 
-  // Alterna: se já é favorito, remove; se não é, adiciona
   Future<void> toggleFavorite(String recipeId) async {
     if (state.isFavorite(recipeId)) {
       await _dataSource.removeFavorite(recipeId);
