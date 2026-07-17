@@ -10,7 +10,7 @@ class FavoritesNotifier extends _$FavoritesNotifier {
 
   @override
   FavoritesState build() {
-    _loadFavorites();
+    _loadFavorites(); 
     return FavoritesState.initial();
   }
 
