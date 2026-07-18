@@ -14,9 +14,9 @@ class FavoritesPage extends ConsumerWidget {
     final repository = ref.read(recipeRepositoryProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Receitas Favoritas')),
+      appBar: AppBar(title: const Text('Favorite Recipes')),
       body: favoritesState.favoriteIds.isEmpty
-          ? const Center(child: Text('Nenhuma receita favoritada ainda.'))
+          ? const Center(child: Text('No favorited recipes yet.'))
           : ListView.builder(
               itemCount: favoritesState.favoriteIds.length,
               itemBuilder: (context, index) {
@@ -26,10 +26,10 @@ class FavoritesPage extends ConsumerWidget {
                   future: repository.getRecipeById(int.parse(id)),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const ListTile(title: Text('Carregando...'));
+                      return const ListTile(title: Text('Loading...'));
                     }
                     if (!snapshot.hasData) {
-                      return ListTile(title: Text('Receita ID: $id (erro ao carregar)'));
+                      return ListTile(title: Text('Recipe ID: $id (Error loading)'));
                     }
 
                     final recipe = snapshot.data!;

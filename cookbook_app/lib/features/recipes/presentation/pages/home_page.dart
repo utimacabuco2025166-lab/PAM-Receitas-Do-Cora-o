@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/recipe_notifier.dart';
 import 'recipe_details_page.dart';
 import 'favorites_page.dart';
+import '../../../auth/presentation/providers/auth_notifier.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -12,21 +13,21 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  final TextEditingController _controller = TextEditingController();// guarda texto no campo de texto
+  final TextEditingController _controller = TextEditingController(); // guarda texto no campo de texto
   String _sort = 'none'; // sem ordenação
-  String _category = 'all'; //todas as categorias
+  String _category = 'all'; // todas as categorias
 
   @override
-  void dispose() { //serve para liberar o campo de de texro dps de usar
-  //perde a memoria para nao ficar ocupando memoria
+  void dispose() { // serve para liberar o campo de texto depois de usar
+    // libera a memória para não ficar ocupando memória
     _controller.dispose();
     super.dispose();
   }
 
-void _search() {//literalmente leva oq foi escrito no campo de texto para a função de busca
-    final query = _controller.text.trim(); // oq foi escrito, mesmo com espaços no inicio e no final, ele vai tirar esses espaços
+  void _search() { // literalmente leva o que foi escrito no campo de texto para a função de busca
+    final query = _controller.text.trim(); // o que foi escrito, mesmo com espaços no início e no final, ele vai tirar esses espaços
 
-    ref.read(recipeProvider.notifier).search(//finalmente chama a função de busca, passando os parametros de busca
+    ref.read(recipeProvider.notifier).search( // finalmente chama a função de busca, passando os parâmetros de busca
       query: query,
       sort: _sort,
       category: _category,
@@ -34,13 +35,13 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun�
   }
 
   @override
-  Widget build(BuildContext context) {// a tela comeca a ter um corpo apartir daqui.
-    final state = ref.watch(recipeProvider);// mostra qual o estado atual da tela.
+  Widget build(BuildContext context) { // a tela começa a ter um corpo a partir daqui.
+    final state = ref.watch(recipeProvider); // mostra qual o estado atual da tela.
 
-    return Scaffold(//estrutura basica da tela
-      appBar: AppBar(//barra de titulo da tela
-        backgroundColor: Colors.green,//fundo
-        foregroundColor: Colors.white,//texto
+    return Scaffold( // estrutura básica da tela
+      appBar: AppBar( // barra de título da tela
+        backgroundColor: Colors.green, // fundo
+        foregroundColor: Colors.white, // texto
         title: const Text('Our recipes'),
         actions: [
           IconButton(
@@ -52,32 +53,38 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun�
               );
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await ref.read(authProvider.notifier).signOut();
+            },
+          ),
         ],
       ),
-      body: Column(// content da pagina
-      //coluna vertical, onde os elementos vao ser colocados um embaixo do outro
+      body: Column( // content da página
+        // coluna vertical, onde os elementos vão ser colocados um embaixo do outro
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
-            child: TextField(//campo de pesquisa)
-              controller: _controller,// 
-              decoration: const InputDecoration(//aparencia
-                labelText: 'Search recipes',//texto do campo
-                border: OutlineInputBorder(),//borda
-                prefixIcon: Icon(Icons.search),//icone
+            child: TextField( // campo de pesquisa
+              controller: _controller, //
+              decoration: const InputDecoration( // aparência
+                labelText: 'Search recipes', // texto do campo
+                border: OutlineInputBorder(), // borda
+                prefixIcon: Icon(Icons.search), // ícone
               ),
-              onSubmitted: (_) => _search(),// enviar = rodar
+              onSubmitted: (_) => _search(), // enviar = rodar
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: DropdownButtonFormField<String>(//menu de escolhas em dropdown
-              value: _sort,// escolha a ordenação
+            child: DropdownButtonFormField<String>( // menu de escolhas em dropdown
+              value: _sort, // escolha a ordenação
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Sort by',
               ),
-              items: const [// opções do menu de escolhas
+              items: const [ // opções do menu de escolhas
                 DropdownMenuItem(
                   value: 'none',
                   child: Text('No sorting'),
@@ -103,7 +110,7 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun�
                 border: OutlineInputBorder(),
                 labelText: 'Category',
               ),
-              items: const [// mesma coisa do menu de escolhas, mas agora para categorias
+              items: const [ // mesma coisa do menu de escolhas, mas agora para categorias
                 DropdownMenuItem(
                   value: 'all',
                   child: Text('All'),
@@ -129,53 +136,52 @@ void _search() {//literalmente leva oq foi escrito no campo de texto para a fun�
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: SizedBox(
               width: double.infinity,
-              child: 
-              ElevatedButton(//botao, mas se quiser pode so apertar o enter
+              child: ElevatedButton( // botão, mas se quiser pode só apertar o enter
                 onPressed: _search,
                 child: const Text('Search'),
               ),
             ),
           ),
           const SizedBox(height: 12),
-          Expanded(// expande para o resto da tela
-            child: state.isLoading// se estiver carregando vai mostrar um circulo girando
+          Expanded( // expande para o resto da tela
+            child: state.isLoading // se estiver carregando vai mostrar um círculo girando
                 ? const Center(child: CircularProgressIndicator())
-                : state.errorMessage != null// houve erro? mostra a mensagem 
+                : state.errorMessage != null // houve erro? mostra a mensagem
                     ? Center(child: Text(state.errorMessage!))
-                    : ListView.builder( //nao houve erro? mostra a lista e cada receita 'e um item
-                        itemCount: state.recipes.length,//quantidade de itens na lista
-                        itemBuilder: (context, index) {//construtor de cada item da lista
+                    : ListView.builder( // não houve erro? mostra a lista e cada receita é um item
+                        itemCount: state.recipes.length, // quantidade de itens na lista
+                        itemBuilder: (context, index) { // construtor de cada item da lista
                           final recipe = state.recipes[index];
-                          return  Card(// caixa visual
+                          return Card( // caixa visual
                             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             child: ListTile(
-                              onTap: (){// quando tocar no item, fara algo
-                                Navigator.push(// abre uma nova janela
-        context,
-        MaterialPageRoute(//rota de navegacao, usa o visual do material design
-          builder: (context) => RecipeDetailsPage(recipe: recipe), // va a pagina RecipeDetailsPage e leva as informacoes
-        ),
-      );
-    }, //layout de cada item da lista
-                              leading: recipe.image.isNotEmpty//lado esquerdo
-                                ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-            child: Image.network(//imagem da internet
-              recipe.image,
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
-            ),
-          )
-        : const Icon(Icons.restaurant),
-    title: Text(recipe.title),
-    subtitle: Text(//tempo de preparo
-      recipe.readyInMinutes > 0
-          ? '${recipe.readyInMinutes} min'
-          : 'Time not provided',
-    ),
-  ),
-);
+                              onTap: () { // quando tocar no item, fará algo
+                                Navigator.push( // abre uma nova janela
+                                  context,
+                                  MaterialPageRoute( // rota de navegação, usa o visual do material design
+                                    builder: (context) => RecipeDetailsPage(recipe: recipe), // vá à página RecipeDetailsPage e leve as informações
+                                  ),
+                                );
+                              }, // layout de cada item da lista
+                              leading: recipe.image.isNotEmpty // lado esquerdo
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.network( // imagem da internet
+                                        recipe.image,
+                                        width: 60,
+                                        height: 60,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : const Icon(Icons.restaurant),
+                              title: Text(recipe.title),
+                              subtitle: Text( // tempo de preparo
+                                recipe.readyInMinutes > 0
+                                    ? '${recipe.readyInMinutes} min'
+                                    : 'Time not provided',
+                              ),
+                            ),
+                          );
                         },
                       ),
           ),
